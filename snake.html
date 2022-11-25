@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      * {
+    margin: 0px;
+    box-sizing: border-box;
+    user-select: none;
+}
+#container {
+    width: 500px;
+    height: 600px;
+    background-color: yellow;
+}
+#canvas {
+    width: 500px;
+    height: 500px;
+    background-color: antiquewhite;
+    border: 3px solid saddlebrown;
+}
+#panel {
+    width: 100%;
+    height: 95px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+#speed {
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.speed {
+    width: 30px;
+    height: 30px;
+    background-color: peru;
+    border-radius: 10px;
+   padding-top: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#start-stop {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.start-stop {
+    width: 40%;
+    height: 30px;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 5px;
+    cursor: pointer;
+    
+}
+
+#start {
+    background-color: aliceblue;
+}
+#stop {
+    background-color: crimson;
+}
+#info {
+    width: 100%;
+  
+    font: bolder ;
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="canvas"></canvas>
+    <div id="panel">
+      <div id="start-stop">
+        <div class="start-stop"id="start">YENİ OYUN</div>
+        <div class="start-stop"id="stop">OYUNU BİTİR</div>
+        <div id="info">FASİLƏ(DAVAM) ÜÇÜN SPACE DÜYMƏSİNİ SIX</div>
+      </div>
+    </div>
+  </div>
+    
+   <script>
+
+var canvas = document.getElementById('canvas');
+canvas.width = 500;
+canvas.height = 500;
+var ctx = canvas.getContext('2d');
+
+var randomX =Math.floor((Math.random()*4000)/10) + 100;
+var randomY =Math.floor((Math.random()*4000)/10) + 100;
+var coordinat = [];
+for(var i=0;i<50;i++){
+coordinat[i] = []
+}
+var animation = false;
+var saygac = 0;
+var beginX = 10;
+var beginY = 10;
+var indeksX=0;
+var indexsY=0;
+var randomX =Math.floor((Math.random()*24)) + 1;
+var randomY =Math.floor((Math.random()*24)) + 1;
+var count =5;
+var arrow = 0;
+var cl = 0;
+var clearArray = [];
+
+function yem(i,j){
+  ctx.beginPath();
+  ctx.arc(i*20+10,j*20+10,10,0,Math.PI*2,true);
+  ctx.fillStyle = "brown";
+  ctx.fill();
+}
+
+function xana(i,j,ball=false,clear =false){
+  ctx.beginPath();
+  ctx.strokeStyle = "grey";
+  //ctx.lineWidth = 0.5;
+  ctx.strokeRect(i*20,j*20,20,20);
+  ctx.stroke();
+  if(ball == true){
+    ctx.arc(i*20+10,j*20+10,10,0,Math.PI*2,true);
+    ctx.fillStyle = "black";
+    ctx.fill();
+  }
+  if(clear == true){
+    ctx.clearRect(i*20,j*20,20,20);
+  }
+}
+
+  
+  for(var i=0;i<canvas.width/20;i++){
+    for(var j=0;j<canvas.height/20;j++){
+     xana(i,j,false,false);
+    }
+  }
+
+setInterval(function () {
+    
+    if(animation){
+     
+        for(var i=0;i<canvas.width/20;i++){
+          for(var j=0;j<canvas.height/20;j++){
+           xana(i,j,false,false);
+          }
+        }
+        document.onkeydown = (e) => {
+          e = e || window.event;
+          if (e.keyCode === 38) {
+            if(arrow == 37||arrow == 39||arrow == 0){
+              arrow = 38; 
+              indeksX=0;
+           indexsY = -1;}
+
+            
+             
+                     
+            console.log('up arrow pressed')    
+          } else if (e.keyCode === 40) {
+            if(arrow == 37||arrow == 39||arrow == 0){
+              arrow = 40; 
+              indeksX = 0;
+             indexsY = 1;
+           
+            }
+
+            
+            console.log('down arrow pressed')
+                    
+          } else if (e.keyCode === 37) {
+            if(arrow == 38||arrow == 40||arrow == 0){
+              arrow = 37;
+              indeksX = -1;
+              indexsY = 0;
+            }
+           
+          
+            console.log('left arrow pressed')
+         
+          } else if (e.keyCode === 39) {
+            if(arrow == 38||arrow == 40||arrow == 0){
+              arrow = 39;
+              indeksX = 1;
+              indexsY = 0;
+            }
+         
+            
+            console.log('right arrow pressed')       
+          }
+          if (e.keyCode === 32) {
+            if(animation){
+              animation = false;
+            }
+            else {animation = true;}
+            }
+        } 
+   
+       
+        xana(beginX,beginY,true,false);
+            beginX += indeksX;
+            beginY +=indexsY;
+            
+            for(var i=1;i<count-2;i++){
+              if(clearArray[2*i]==beginX&&clearArray[2*i+1]==beginY){
+               clearInterval(animation);
+              }
+            }
+
+        if(cl == count){
+          xana(clearArray[0],clearArray[1],false,true)
+          xana(clearArray[0],clearArray[1],false,false)
+          clearArray.splice(0,2);
+          cl -=1;
+        }
+           
+          cl +=1
+        if(arrow!=0){
+          if(beginX >24){
+            beginX = 0
+          }
+         else if(beginX<0){
+            beginX = 24;
+          }
+          else if(beginY > 24){
+            beginY = 0
+          }
+         else if(beginY<0){
+            beginY = 24;
+          }
+          clearArray[2*cl] = beginX;
+          clearArray[2*cl+1] = beginY;
+          saygac++
+        }
+        
+      yem(randomX,randomY);
+      if(Math.abs(beginX - randomX)<1 && Math.abs(beginY - randomY)<1){
+            randomX = Math.floor((Math.random()*24)) + 1;
+            randomY = Math.floor((Math.random()*24)) + 1;
+        count++;
+    
+      }
+  
+
+       if(saygac == 6){
+         xana(10,10,false,true)
+         xana(10,10,false,false)
+       }
+      
+ }
+  }, 200)
+
+ 
+  document.getElementById("start").onclick = ()=>{
+    if(!animation){
+      
+      animation = true;
+    }
+    }
+
+document.getElementById("stop").onclick = () =>{
+  document.location.reload(true);
+ 
+}
+
+   </script>
+  
+</body>
+</html>
